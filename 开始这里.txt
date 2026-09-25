@@ -80,9 +80,9 @@
   5. 「推送仓库」列（账号列表每行都有，按单个账号推送）
      每个账号后面有两个小按钮：
 
-        ☁ 推送上云   把这个账号的资料推到 GitHub 私有仓库
+        ☁ 推送上云   生成这个账号的**加密信息页**并提交到仓库
                      （没推过就是新增，推过就更新为最新内容）
-        ↩ 撤回       把这个账号从仓库里撤下来（删掉它的页面），
+        ↩ 撤回       把这个账号的信息页从仓库里撤下来，
                      本地数据不受影响，随时可以再推上去
 
      这一列最前面还有个状态标记，一眼看出每个账号的情况：
@@ -91,62 +91,81 @@
         未推送   这个账号还没进仓库
         未知     没配令牌或断网，暂时查不到
 
-     也可以分别推：新增一个账号就点它那一行的「推送」，
+     推送是**按单个账号**进行的：新增一个账号就点它那一行的「推送」，
      不会影响其他账号，也不会把别的账号未推送的改动带上去。
 
      表格最上方那条浅蓝/浅黄的状态条会汇总：
         共几个账号、已推送几个、有几个还没推。
 
 
-【推送到 GitHub 私有仓库】
+【给护士看的页面：一账号一链接 + 页面密码】
 
-  >>> 已经配置好了，你直接用就行，下面「首次配置」不用再看。<<<
+  站点地址（公开，谁都能打开，但看不到任何内容）：
+      https://ffamx.github.io/nurse-registry/
 
-  仓库地址（私有，需登录你的 GitHub 账号才能打开）：
-      https://github.com/FFAMX/nurse-registry
+  每个账号一条独立链接，长这样：
+      https://ffamx.github.io/nurse-registry/accounts/03c57a5c81.html
+                                                  ^^^^^^^^^^ 10 位随机短码
 
-  想看最新数据，打开这个链接：
-      https://github.com/FFAMX/nurse-registry/blob/main/pages/README.md
+  打开链接会要求输入**这个账号专属的页面密码**，
+  密码正确才会在浏览器里解密出信息；密码不对就只是一堆乱码。
 
-  上面这个页面是所有账号的总览表，点任意一行「查看」就是
-  该账号的执业信息详情页，手机上打开也正常。
-  注意：总览表里**只会列出已推送的账号**，没推送的不会出现。
+  页面密码在哪看：
+      后台 → 账号列表 → 「推送仓库」列里推送成功后，
+      会显示该账号的链接和密码，复制发给本人即可。
+      也可以在账号的「页面密码」那里重新生成或手动指定。
+
+  ★ 为什么这样设计、为什么仓库公开也没事：
+      GitHub Pages 只能放静态文件，**没有服务端**，
+      做不了真正的「登录后才显示内容」。
+      所以这里不是靠登录拦人，而是把内容**加密**后再发布：
+        · 仓库里 docs/accounts/*.html 全都是密文，没密码解不开；
+        · 头像照片内嵌进密文，仓库里看不到任何照片文件；
+        · 文件名是随机短码，不含身份证号；
+        · 页面里显示的身份证号是打码的（保留前 4 位与后 4 位）。
+      也就是说：**仓库公开 = 别人能看到"有这些页面"，但看不到任何内容。**
 
   日常操作：
-      新增/修改某个账号 → 点它那一行的「推送」→ 刷新 GitHub 页面即可看到。
+      新增/修改某个账号 → 点它那一行的「推送」→ 等 1~2 分钟
+      （GitHub 要重新构建站点）→ 把链接和密码发给本人。
       想下架某个账号 → 点它那一行的「撤回」，本地数据不动。
 
-  ------------------------------------------------------------
-  以下是首次配置的记录，将来换电脑或令牌过期时才需要再看
-  ------------------------------------------------------------
 
-  第 1 步  建一个私有仓库
-      用你的 GitHub 账号（FFAMX）登录，新建一个仓库：
-          名字：nurse-registry
-          类型：Private（必须选私有）
-      建好后不用做别的，不用上传任何文件。
+【关于仓库与令牌 · 首次配置记录】
+
+  仓库地址（公开）：
+      https://github.com/FFAMX/nurse-registry
+
+  说明：
+      · 仓库里只有程序源码和**加密后**的页面，不含任何明文资料；
+        账号数据始终留在本机的 data\db.json 里，不会上传。
+      · 令牌只保存在本机的 .env 里，不会上传到任何地方。
+      · 令牌过期了就重新生成一个，替换 .env 里的 GITHUB_TOKEN。
+      · 邮箱收不到 GitHub 通知是正常的，本仓库未开启 Issues/Wiki。
+
+  第 1 步  建仓库
+      用你的 GitHub 账号（FFAMX）建一个仓库，名字 nurse-registry。
+      本项目用**公开仓库**，因为免费账号的 GitHub Pages 只在公开仓库可用。
 
   第 2 步  生成访问令牌
       GitHub 右上角头像 → Settings → Developer settings
         → Personal access tokens → Fine-grained tokens → Generate new token
 
       勾选这些权限：
-          Repository permissions → Contents: Read and write   （必须）
-          Repository permissions → Metadata: Read-only        （会自动勾上）
+          Repository permissions → Contents: Read and write     （必须）
+          Repository permissions → Metadata: Read-only          （会自动勾上）
           Account permissions    → Administration: Read and write
-                                                      （只有想让程序自动建仓库才需要）
-      Repository access 选择：All repositories（或指定上面那个仓库）
+      想让程序用接口自动开关 GitHub Pages 的话，再加一项：
+          Repository permissions → Pages: Read and write
 
-      生成后把那一串令牌复制下来（页面关掉就再也看不到了）。
+      Repository access 选择：All repositories（或指定上面那个仓库）
 
   第 3 步  把令牌填进配置文件
       用记事本打开本目录下的  .env  文件，找到这一行：
 
           GITHUB_TOKEN=
 
-      等号后面粘贴你的令牌，保存。变成这样：
-
-          GITHUB_TOKEN=github_pat_你的令牌
+      等号后面粘贴你的令牌，保存。
 
   第 4 步  重启服务
       双击  停止服务.bat  ，再双击  一键启动.bat
@@ -154,16 +173,13 @@
       回到后台页面，账号列表下方会出现一条浅蓝色状态条，
       写着「仓库 FFAMX/nurse-registry……」，说明配置成功。
 
-  说明：
-      · 仓库是私有的，只有你自己的账号登录后才能看，别人打不开。
-      · 令牌只保存在本机的 .env 里，不会上传到任何地方。
-      · 如果令牌过期了，重新生成一个替换掉 GITHUB_TOKEN 即可。
-      · 推送和撤回都是**按单个账号**进行的：推送 A 不会改动 B 的内容，
-        也不会把 B 尚未推送的本地改动一起带上去。
-      · 状态标记（已推送 / 有改动 / 未推送）是与 GitHub 上实际内容
-        实时比对的，可以作为是否还需要推送的判断依据；断网时会显示
-        「未知」并明确提示。
-      · 邮箱收不到 GitHub 通知是正常的，本仓库未开启 Issues/Wiki。
+  第 5 步  开启 GitHub Pages（只需要做一次）
+      打开  https://github.com/FFAMX/nurse-registry/settings/pages
+        · Source 选 “Deploy from a branch”
+        · Branch 选 “main”，目录选 “/docs”，点 Save
+      等 1~2 分钟，上面的站点地址就能打开了。
+      （如果第 2 步勾了 Pages: Read and write，这一步可省。）
+
 
 
 【停止服务】
@@ -196,7 +212,7 @@
 
 问题：某一行的「推送」按钮是灰的，点不动
     说明还没配置令牌，或者 .env 里的 GITHUB_TOKEN 是空的。
-    按上面【推送到 GitHub 私有仓库 · 首次配置】做一遍即可。
+    按上面【关于仓库与令牌 · 首次配置记录】做一遍即可。
     按钮上鼠标悬停会直接说明原因。
 
 问题：「撤回」按钮是灰的，点不动
@@ -214,6 +230,12 @@
 问题：点「推送」提示「找不到该仓库或令牌无权访问」
     1. 确认 GitHub 上已经建好仓库 nurse-registry
     2. 确认令牌的 Repository access 里包含了这个仓库
+
+问题：推送成功，但打开链接一直 404
+    说明 GitHub Pages 还没开启，或者刚开还在构建。
+    1. 打开 https://github.com/FFAMX/nurse-registry/settings/pages
+       确认 Source 是 “Deploy from a branch”，Branch 是 “main”，目录是 “/docs”
+    2. 刚开启或刚推送后要等 1~2 分钟，GitHub 需要重新构建站点
 
 问题：点「推送」提示「连接 GitHub 失败」
     说明本机网络访问不了 api.github.com。
