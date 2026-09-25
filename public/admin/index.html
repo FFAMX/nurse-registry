@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="referrer" content="no-referrer" />
+  <title>后台管理 · 护士电子化注册信息系统</title>
+  <link rel="shortcut icon" href="../ns-favicon.ico" />
+  <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="../assets/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="./admin.css" />
+</head>
+<body>
+
+  <!-- ============ 登录视图 ============ -->
+  <section id="view-login" class="login-view">
+    <div class="login-card">
+      <div class="login-brand">
+        <div class="brand-mark"><i class="fa fa-user-md"></i></div>
+        <h1>后台管理系统</h1>
+        <p>护士电子化注册信息系统 · 学习演示项目</p>
+      </div>
+
+      <div id="login-error" class="alert alert-error" hidden></div>
+
+      <form id="login-form" autocomplete="off">
+        <label class="field">
+          <span class="field-label">管理员账号</span>
+          <span class="field-control">
+            <i class="fa fa-user"></i>
+            <input type="text" id="login-username" name="username" placeholder="请输入管理员账号" />
+          </span>
+        </label>
+
+        <label class="field">
+          <span class="field-label">登录密码</span>
+          <span class="field-control">
+            <i class="fa fa-lock"></i>
+            <input type="password" id="login-password" name="password" placeholder="请输入密码" />
+            <button type="button" class="peek" id="toggle-password" aria-label="显示密码">
+              <i class="fa fa-eye"></i>
+            </button>
+          </span>
+        </label>
+
+        <button type="submit" class="btn-primary btn-block" id="login-submit">
+          <span class="label">登 录</span>
+        </button>
+      </form>
+
+      <p class="login-tip">
+        <i class="fa fa-info-circle"></i>
+        首次使用请查看服务端启动日志，其中会打印初始管理员账号与密码。
+      </p>
+      <p class="login-back"><a href="../login.html"><i class="fa fa-arrow-left"></i> 返回前台登录</a></p>
+    </div>
+  </section>
+
+  <!-- ============ 控制台视图 ============ -->
+  <div id="view-console" class="console" hidden>
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <div class="brand-mark small"><i class="fa fa-user-md"></i></div>
+        <div>
+          <strong>后台管理</strong>
+          <span>护士注册信息系统</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item is-active" data-view="accounts">
+          <i class="fa fa-users"></i><span>账号管理</span>
+        </button>
+        <button class="nav-item" data-view="audit">
+          <i class="fa fa-history"></i><span>操作日志</span>
+        </button>
+        <button class="nav-item" data-view="admins">
+          <i class="fa fa-shield"></i><span>管理员</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-foot">
+        <a href="../login.html" class="side-link"><i class="fa fa-external-link"></i> 前台登录页</a>
+        <a href="../index.html" class="side-link"><i class="fa fa-external-link"></i> 信息展示页</a>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h2 id="page-title">账号管理</h2>
+          <p id="page-subtitle">对前台登录账号进行增删改查</p>
+        </div>
+        <div class="topbar-user">
+          <span class="who"><i class="fa fa-user-circle-o"></i> <b id="admin-name">-</b></span>
+          <button class="btn-ghost" id="btn-logout"><i class="fa fa-sign-out"></i> 退出</button>
+        </div>
+      </header>
+
+      <div id="toast-area" class="toast-area"></div>
+
+      <!-- ---- 账号管理 ---- -->
+      <section class="panel" id="panel-accounts">
+        <div class="stat-row">
+          <div class="stat"><span class="stat-label">账号总数</span><b id="stat-total">0</b></div>
+          <div class="stat"><span class="stat-label">启用中</span><b id="stat-active" class="c-green">0</b></div>
+          <div class="stat"><span class="stat-label">执业在册</span><b id="stat-registered" class="c-blue">0</b></div>
+        </div>
+
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <span class="search">
+              <i class="fa fa-search"></i>
+              <input type="search" id="search-keyword" placeholder="搜索用户名 / 姓名 / 身份证号 / 执业机构" />
+            </span>
+            <select id="filter-status" class="select">
+              <option value="">全部状态</option>
+              <option value="active">仅启用</option>
+              <option value="disabled">仅停用</option>
+            </select>
+            <select id="select-page-size" class="select">
+              <option value="10">每页 10 条</option>
+              <option value="20">每页 20 条</option>
+              <option value="50">每页 50 条</option>
+            </select>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn-ghost" id="btn-refresh"><i class="fa fa-refresh"></i> 刷新</button>
+            <button class="btn-danger-ghost" id="btn-batch-delete" disabled>
+              <i class="fa fa-trash-o"></i> 批量删除 (<span id="selected-count">0</span>)
+            </button>
+            <button class="btn-primary" id="btn-create"><i class="fa fa-plus"></i> 新增账号</button>
+          </div>
+        </div>
+
+        <p class="gh-status" id="github-status" hidden></p>
+
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th class="col-check"><input type="checkbox" id="check-all" /></th>
+                <th data-sort="username" class="sortable">用户名</th>
+                <th data-sort="display_name" class="sortable">姓名</th>
+                <th>身份证号</th>
+                <th>执业机构</th>
+                <th>注册状态</th>
+                <th>账号状态</th>
+                <th data-sort="created_at" class="sortable">创建时间</th>
+                <th class="col-repo">推送仓库</th>
+                <th class="col-actions">操作</th>
+              </tr>
+            </thead>
+            <tbody id="account-tbody">
+              <tr><td colspan="10" class="empty">加载中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="pager">
+          <span class="pager-info" id="pager-info">-</span>
+          <div class="pager-btns">
+            <button class="btn-ghost" id="btn-prev"><i class="fa fa-angle-left"></i> 上一页</button>
+            <span id="pager-current" class="pager-current">1 / 1</span>
+            <button class="btn-ghost" id="btn-next">下一页 <i class="fa fa-angle-right"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ---- 操作日志 ---- -->
+      <section class="panel" id="panel-audit" hidden>
+        <div class="toolbar">
+          <div class="toolbar-left"><p class="hint">仅保留最近 200 条后台操作记录。</p></div>
+          <div class="toolbar-right">
+            <button class="btn-ghost" id="btn-refresh-audit"><i class="fa fa-refresh"></i> 刷新</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>时间</th><th>操作人</th><th>动作</th><th>对象</th><th>说明</th></tr>
+            </thead>
+            <tbody id="audit-tbody">
+              <tr><td colspan="5" class="empty">加载中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ---- 管理员 ---- -->
+      <section class="panel" id="panel-admins" hidden>
+        <div class="toolbar">
+          <div class="toolbar-left"><p class="hint">仅超级管理员可新增或删除管理员账号。</p></div>
+          <div class="toolbar-right">
+            <button class="btn-ghost" id="btn-refresh-admins"><i class="fa fa-refresh"></i> 刷新</button>
+            <button class="btn-primary" id="btn-create-admin"><i class="fa fa-plus"></i> 新增管理员</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>用户名</th><th>显示名称</th><th>角色</th><th>状态</th><th>最后登录</th><th class="col-actions">操作</th></tr>
+            </thead>
+            <tbody id="admin-tbody">
+              <tr><td colspan="6" class="empty">加载中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ============ 账号编辑抽屉 ============ -->
+  <div class="drawer-mask" id="drawer-mask" hidden></div>
+  <aside class="drawer" id="account-drawer" hidden aria-modal="true" role="dialog">
+    <header class="drawer-head">
+      <h3 id="drawer-title">新增账号</h3>
+      <button class="icon-btn" id="drawer-close" aria-label="关闭"><i class="fa fa-times"></i></button>
+    </header>
+
+    <form id="account-form" class="drawer-body" autocomplete="off">
+      <div id="form-error" class="alert alert-error" hidden></div>
+
+      <fieldset class="fs">
+        <legend>账号信息</legend>
+        <div class="grid-2">
+          <label class="field">
+            <span class="field-label">用户名 <em>*</em></span>
+            <span class="field-control plain">
+              <input type="text" id="f-username" placeholder="登录用户名，如身份证号" />
+            </span>
+          </label>
+          <label class="field">
+            <span class="field-label">显示名称</span>
+            <span class="field-control plain">
+              <input type="text" id="f-display_name" placeholder="留空则取姓名字段" />
+            </span>
+          </label>
+          <label class="field">
+            <span class="field-label" id="label-password">密码 <em>*</em></span>
+            <span class="field-control plain">
+              <input type="password" id="f-password" placeholder="至少 6 位" />
+            </span>
+          </label>
+          <label class="field">
+            <span class="field-label">账号状态</span>
+            <span class="field-control plain">
+              <select id="f-is_active">
+                <option value="true">启用</option>
+                <option value="false">停用</option>
+              </select>
+            </span>
+          </label>
+        </div>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>基本信息</legend>
+        <div class="grid-2">
+          <label class="field"><span class="field-label">姓名</span><span class="field-control plain"><input type="text" id="f-p-姓名" /></span></label>
+          <label class="field"><span class="field-label">性别</span><span class="field-control plain"><select id="f-p-性别"></select></span></label>
+          <label class="field"><span class="field-label">执业注册状态</span><span class="field-control plain"><select id="f-p-执业注册状态"></select></span></label>
+          <label class="field"><span class="field-label">出生日期</span><span class="field-control plain"><input type="date" id="f-p-出生日期" /></span></label>
+          <label class="field"><span class="field-label">国籍</span><span class="field-control plain"><input type="text" id="f-p-国籍" /></span></label>
+          <label class="field"><span class="field-label">民族</span><span class="field-control plain"><input type="text" id="f-p-民族" /></span></label>
+          <label class="field"><span class="field-label">身份证号</span><span class="field-control plain"><input type="text" id="f-p-身份证号" /></span></label>
+          <label class="field"><span class="field-label">护士执业证书编号</span><span class="field-control plain"><input type="text" id="f-p-护士执业证书编号" /></span></label>
+          <label class="field"><span class="field-label">注册有效期至</span><span class="field-control plain"><input type="date" id="f-p-注册有效期至" /></span></label>
+          <label class="field"><span class="field-label">通过考试时间</span><span class="field-control plain"><input type="date" id="f-p-通过考试时间" /></span></label>
+          <label class="field"><span class="field-label">健康状况</span><span class="field-control plain"><input type="text" id="f-p-健康状况" /></span></label>
+          <label class="field"><span class="field-label">参加工作时间</span><span class="field-control plain"><input type="date" id="f-p-参加工作时间" /></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset class="fs">
+        <legend>工作单位</legend>
+        <div class="grid-2">
+          <label class="field"><span class="field-label">执业机构</span><span class="field-control plain"><input type="text" id="f-p-执业机构" /></span></label>
+          <label class="field"><span class="field-label">工作科室</span><span class="field-control plain"><input type="text" id="f-p-工作科室" /></span></label>
+          <label class="field"><span class="field-label">工作类别</span><span class="field-control plain"><input type="text" id="f-p-工作类别" /></span></label>
+          <label class="field"><span class="field-label">职务</span><span class="field-control plain"><input type="text" id="f-p-职务" /></span></label>
+          <label class="field"><span class="field-label">技术职称</span><span class="field-control plain"><input type="text" id="f-p-技术职称" /></span></label>
+          <label class="field"><span class="field-label">审批机关</span><span class="field-control plain"><input type="text" id="f-p-审批机关" /></span></label>
+          <label class="field"><span class="field-label">审批时间</span><span class="field-control plain"><input type="date" id="f-p-审批时间" /></span></label>
+          <label class="field grid-span"><span class="field-label">头像</span>
+            <span class="field-control plain">
+              <input type="text" id="f-p-头像" placeholder="./assets/img/avatar.webp 或 https://…，也可点右侧按钮从本地选图" />
+            </span>
+            <span class="avatar-picker">
+              <input type="file" id="f-avatar-file" accept="image/png,image/jpeg,image/webp" hidden />
+              <button type="button" class="btn-ghost btn-sm" id="btn-pick-avatar">选择本地图片</button>
+              <button type="button" class="btn-ghost btn-sm" id="btn-clear-avatar" hidden>清除头像</button>
+              <img id="avatar-preview" alt="头像预览" hidden />
+              <span id="avatar-tip" class="dim"></span>
+            </span>
+          </label>
+        </div>
+      </fieldset>
+    </form>
+
+    <footer class="drawer-foot">
+      <button type="button" class="btn-ghost" id="btn-random" title="用一份格式合规的测试样本填充整个表单">
+        <i class="fa fa-random"></i> 随机生成
+      </button>
+      <span class="grow"></span>
+      <button class="btn-ghost" id="btn-cancel">取消</button>
+      <button class="btn-primary" id="btn-save"><i class="fa fa-check"></i> 保存</button>
+    </footer>
+  </aside>
+
+  <!-- ============ 新增管理员弹窗 ============ -->
+  <div class="modal-mask" id="admin-modal" hidden>
+    <div class="modal">
+      <header class="modal-head">
+        <h3>新增管理员</h3>
+        <button class="icon-btn" id="admin-modal-close" aria-label="关闭"><i class="fa fa-times"></i></button>
+      </header>
+      <div class="modal-body">
+        <div id="admin-form-error" class="alert alert-error" hidden></div>
+        <label class="field"><span class="field-label">用户名 <em>*</em></span><span class="field-control plain"><input type="text" id="a-username" /></span></label>
+        <label class="field"><span class="field-label">显示名称</span><span class="field-control plain"><input type="text" id="a-display_name" /></span></label>
+        <label class="field"><span class="field-label">密码 <em>*</em></span><span class="field-control plain"><input type="password" id="a-password" placeholder="至少 8 位" /></span></label>
+        <label class="field"><span class="field-label">角色</span><span class="field-control plain">
+          <select id="a-role"><option value="admin">普通管理员</option><option value="superadmin">超级管理员</option></select>
+        </span></label>
+      </div>
+      <footer class="modal-foot">
+        <button class="btn-ghost" id="admin-modal-cancel">取消</button>
+        <button class="btn-primary" id="admin-modal-save"><i class="fa fa-check"></i> 创建</button>
+      </footer>
+    </div>
+  </div>
+
+  <!-- ============ 通用确认弹窗 ============ -->
+  <div class="modal-mask" id="confirm-modal" hidden>
+    <div class="modal narrow">
+      <header class="modal-head">
+        <h3 id="confirm-title">确认操作</h3>
+        <button class="icon-btn" id="confirm-close" aria-label="关闭"><i class="fa fa-times"></i></button>
+      </header>
+      <div class="modal-body"><p id="confirm-message" class="confirm-text"></p></div>
+      <footer class="modal-foot">
+        <button class="btn-ghost" id="confirm-cancel">取消</button>
+        <button class="btn-danger" id="confirm-ok">确认删除</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="../assets/js/ery.custom.min.js"></script>
+  <script src="../assets/js/bootstrap.min.js"></script>
+  <script src="./api.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>

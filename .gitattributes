@@ -1,0 +1,21 @@
+# 换行符策略：避免 git 自动转换在不同机器上造成批处理解析异常
+# （本项目曾因 .bat 换行符/编码问题导致双击启动失败，这里显式固定）
+
+* text=auto eol=lf
+
+# Windows 批处理与 VBS 必须是 CRLF，否则 cmd.exe 可能把多行结构解析错
+*.bat  text eol=crlf
+*.cmd  text eol=crlf
+*.vbs  text eol=crlf
+
+# 二进制资源不做任何换行符转换
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.gif   binary
+*.webp  binary
+*.ico   binary
+*.woff  binary
+*.woff2 binary
+*.ttf   binary
+*.eot   binary

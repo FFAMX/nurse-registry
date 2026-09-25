@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>职业信息</title>
+  <style>
+    body { margin: 0; background: #eceef3; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; color: #21242a; }
+    .page { width: 100%; margin: 0; padding: 12px; box-sizing: border-box; }
+    .title { font-size: 24px; font-weight: 700; margin: 8px 0 10px; }
+    .status { font-size: 14px; color: #555; margin-bottom: 12px; }
+    .status b { color: #1ea0dc; margin-left: 8px; }
+    .hero { background: linear-gradient(135deg, #56bce8, #46aede); border-radius: 6px; color: #fff; padding: 13px 16px 11px; position: relative; min-height: 88px; margin-bottom: 14px; overflow: visible; }
+    .hero-text { min-height: 68px; display: flex; flex-direction: column; justify-content: center; max-width: calc(100% - min(28vw, 172px)); }
+    .hero h2 { margin: 0; font-size: clamp(22px, 5.4vw, 48px); line-height: 1.08; letter-spacing: 0.1px; }
+    .hero p { margin: 8px 0 0; font-size: clamp(12px, 3.2vw, 24px); line-height: 1.1; }
+    .avatar { position: absolute; right: 14px; top: -28px; width: clamp(84px, 17vw, 132px); height: clamp(108px, 22vw, 168px); object-fit: cover; border: 5px solid #fff; border-radius: 6px; background: #fff; }
+    .section-title { font-size: 24px; font-weight: 700; margin: 30px 0 12px; }
+    .card { background: #fff; border-radius: 6px; padding: 0 12px; }
+    .row { min-height: 65px; border-bottom: 1px solid #eff1f4; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .row:last-child { border-bottom: none; }
+    .k { color: #5b6168; font-size: 16px; }
+    .v { color: #22262c; font-size: 16px; font-weight: 600; text-align: right; word-break: break-word; }
+    @media (min-width: 768px) {
+      .page { max-width: 700px; margin: 0 auto; }
+      .hero { min-height: 100px; }
+      .hero-text { min-height: 72px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 预览模式提示条：仅当 URL 带 ?preview= 时显示，不影响正常登录后的浏览 -->
+  <div id="preview-bar" hidden style="background:#e8f4fa;border-bottom:1px solid #b9dff2;color:#1c7fb0;font-size:13px;padding:8px 16px;text-align:center">
+    当前为<strong>预览模式</strong>（由后台「预览信息页」打开），展示的是后台保存的数据。
+    <a href="./admin/" style="color:#1c7fb0;text-decoration:underline">返回后台管理</a>
+  </div>
+  <div class="page">
+    <div class="title">基本信息</div>
+    <div class="status">执业注册状态 <b id="f-执业注册状态">在册</b></div>
+    <div class="hero">
+      <div class="hero-text">
+        <h2 id="f-姓名">-</h2>
+        <p>性别 | <span id="f-性别">-</span></p>
+      </div>
+      <img class="avatar" id="avatar" alt="avatar" />
+    </div>
+
+    <div class="card" id="basic"></div>
+    <div class="section-title">工作单位</div>
+    <div class="card" id="work"></div>
+  </div>
+  <script>
+    (function () {
+    function withTimestamp(url) {
+  try {
+    const target = new URL(url, window.location.href);
+    target.searchParams.set('t', Date.now().toString());
+    return target.toString();
+  } catch (error) {
+    return url;
+  }
+}
+
+function ensureFreshTimestamp() {
+  try {
+    const currentUrl = new URL(window.location.href);
+    const rawTimestamp = (currentUrl.searchParams.get('t') || '').trim();
+    const timestamp = Number(rawTimestamp);
+    const isValidTimestamp = rawTimestamp !== '' && Number.isFinite(timestamp);
+    if (isValidTimestamp && Math.abs(Date.now() - timestamp) <= 5000) {
+      return true;
+    }
+    window.location.replace(withTimestamp(window.location.href));
+    return false;
+  } catch (error) {
+    return true;
+  }
+}
+
+    if (!ensureFreshTimestamp()) {
+      return;
+    }
+
+    function navigate(url) {
+      window.location.href = withTimestamp(url);
+    }
+
+    /**
+     * 渲染信息页。
+     * @param {object} user 需包含 profile / display_name / username
+     */
+    function renderView(user) {
+      const p = (user && user.profile) || {};
+      const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v || '-'; };
+      set('f-姓名', p['姓名'] || user.display_name || user.username);
+      set('f-性别', p['性别']);
+      set('f-执业注册状态', p['执业注册状态'] || '在册');
+      const avatar = document.getElementById('avatar');
+      const avatarUrl = p['头像'] || '';
+      if (avatarUrl) avatar.src = avatarUrl; else avatar.style.display = 'none';
+      renderRest(p);
+    }
+
+    // 预览模式：URL 带 ?preview=<账号ID> 时，直接读后端该账号的数据。
+    // 后台「预览信息页」按钮走的就是这条路，无需前台登录。
+    const previewId = new URLSearchParams(window.location.search).get('preview');
+
+    if (previewId) {
+      document.title = '职业信息（预览）';
+      fetch('/api/preview/account/' + encodeURIComponent(previewId), {
+        headers: { Accept: 'application/json' },
+        cache: 'no-store',
+      })
+        .then(function (r) { return r.json().catch(function () { return null; }); })
+        .then(function (res) {
+          if (!res || !res.ok) {
+            throw new Error((res && res.error && res.error.message) || '未找到该账号');
+          }
+          renderView(res.data.account);
+          const bar = document.getElementById('preview-bar');
+          if (bar) bar.hidden = false;
+        })
+        .catch(function (err) {
+          document.body.innerHTML =
+            '<div style="padding:80px 24px;text-align:center;' +
+            'font:14px/1.9 system-ui,-apple-system,\'Microsoft YaHei\',sans-serif;color:#334155">' +
+            '<h2 style="margin:0 0 12px;font-size:20px;color:#0f172a">预览失败</h2>' +
+            '<p style="margin:0 0 20px">' + err.message + '</p>' +
+            '<a href="./admin/" style="color:#26abe8">返回后台管理</a></div>';
+        });
+      return;
+    }
+
+    // 常规流程：读取前台登录时写入的本地数据
+    const user = JSON.parse(localStorage.getItem('web003_user') || 'null');
+    if (!user) { navigate('./login.html'); return; }
+    renderView(user);
+    /** 渲染「基本信息」与「工作单位」两组明细 */
+    function renderRest(p) {
+      const basic = [
+        ['出生日期', p['出生日期']], ['国籍', p['国籍']], ['民族', p['民族']], ['身份证号', p['身份证号']],
+        ['护士执业证书编号', p['护士执业证书编号']], ['注册有效期至', p['注册有效期至']], ['通过考试时间', p['通过考试时间']],
+        ['健康状况', p['健康状况']], ['参加工作时间', p['参加工作时间']]
+      ];
+      const work = [
+        ['执业机构', p['执业机构']], ['工作科室', p['工作科室']], ['工作类别', p['工作类别']],
+        ['职务', p['职务']], ['技术职称', p['技术职称']], ['审批机关', p['审批机关']], ['审批时间', p['审批时间']]
+      ];
+      const fill = (containerId, rows) => {
+        const root = document.getElementById(containerId);
+        root.innerHTML = rows.map(([k, v]) => `<div class="row"><div class="k">${k}</div><div class="v">${v || '-'}</div></div>`).join('');
+      };
+      fill('basic', basic);
+      fill('work', work);
+    }
+    })();
+  </script>
+</body>
+</html>

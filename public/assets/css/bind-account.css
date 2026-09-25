@@ -1,0 +1,307 @@
+/* 基础样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: PingFang SC, Microsoft YaHei;
+  font-style: normal;
+  font-size: 12px;
+  text-transform: none;
+}
+
+/* body 样式 */
+body {
+  margin: 0;
+  height: 100vh;
+  background-color: #f4f6fb;
+}
+
+/* CSS变量定义 */
+:root {
+  /* 颜色变量 */
+  --color-text-primary: #333333;
+  --color-medium-gray: #666666;
+  --color-light-gray: #999999;
+  --color-very-light-gray: #cccccc;
+  --color-white: #ffffff;
+  --color-primary-blue: #26abe8;
+  --color-error: #ff6767;
+  --color-success: #36be6d;
+  --color-warning: #fe7c48;
+  --color-gray: #bababa;
+  --color-button-primary: #4db5e5;
+  --van-cell-horizontal-padding: 16px;
+}
+
+/* 主容器样式 */
+.bind-account {
+  padding: 20px;
+  background: linear-gradient(
+    179deg,
+    #e2f3fa 0%,
+    rgba(255, 255, 255, 0.2) 100%
+  );
+  min-height: 100vh;
+}
+
+/* 标题样式 */
+.title {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 13px;
+  color: var(--color-text-primary);
+}
+
+/* 描述文字样式 */
+.description {
+  font-size: 12px;
+  color: var(--color-medium-gray);
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+/* 表单样式 */
+.van-form {
+  width: 100%;
+}
+
+/* 单元格样式 */
+.van-cell {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0 var(--van-cell-horizontal-padding);
+  background-color: var(--color-white);
+  border-radius: 4px;
+  border: 1px solid #e5e5e5;
+}
+
+/* 字段样式 */
+.van-field {
+  width: 100%;
+}
+
+/* 左侧图标样式 */
+.van-field__left-icon {
+  width: 18px;
+  height: 20px;
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.van-field__left-icon svg {
+  width: 18px;
+  height: 20px;
+}
+
+/* 字段主体样式 */
+.van-field__body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* 输入框样式 */
+.van-field__control {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 14px;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.van-field__control::placeholder {
+  color: var(--color-gray);
+  font-weight: 400;
+}
+
+/* 验证码容器样式 */
+.captcha-container {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+.captcha-container .captcha-field {
+  margin-bottom: 0;
+}
+
+.captcha-field {
+  flex: 1;
+}
+
+/* 验证码图片样式 */
+.captcha-image {
+  width: 108px;
+  height: 44px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid #e5e5e5;
+  object-fit: cover;
+}
+
+/* 错误信息样式 */
+.error-message {
+  color: var(--color-error);
+  font-size: 12px;
+  margin-top: -10px;
+  margin-bottom: 10px;
+  padding-left: var(--van-cell-horizontal-padding);
+}
+
+/* 按钮容器样式 */
+.button-container {
+  margin-top: 20px;
+}
+
+/* 按钮样式 */
+.van-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  transition: all 0.3s;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap;
+  outline: none;
+  text-decoration: none;
+}
+
+.van-button--primary {
+  background-color: var(--color-button-primary);
+  border-color: var(--color-button-primary);
+  color: var(--color-white);
+}
+
+.van-button--round {
+  border-radius: 4px;
+}
+
+.van-button--block {
+  display: flex;
+  width: 100%;
+}
+
+.van-button__text {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* 按钮禁用状态 */
+.van-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.van-button:disabled:hover {
+  background-color: var(--color-button-primary);
+  border-color: var(--color-button-primary);
+}
+
+/* 按钮悬停效果 */
+.van-button--primary:hover:not(:disabled) {
+  background-color: #3ba8d8;
+  border-color: #3ba8d8;
+}
+
+/* 按钮点击效果 */
+.van-button--primary:active:not(:disabled) {
+  background-color: #2a9bc7;
+  border-color: #2a9bc7;
+}
+
+/* 按钮高度 */
+.van-button {
+  height: 44px;
+  padding: 0 16px;
+}
+
+/* 加载状态样式 */
+.van-button--loading {
+  pointer-events: none;
+}
+
+.van-button--loading .van-button__text {
+  opacity: 0.6;
+}
+
+/* 响应式设计 */
+@media (max-width: 480px) {
+  .bind-account {
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .description {
+    font-size: 11px;
+  }
+}
+/* validate error */
+.validation-summary-errors {
+  color: #e90d51;
+  font-size: 14px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  padding: 5px 5px 5px 13px;
+  background-color: #eee;
+  border: 1px solid #eee;
+}
+
+.validation-summary-errors li {
+  padding-left: 2px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  list-style: none;
+}
+
+.field-validation-error {
+  color: #eee;
+  font-size: 12px;
+  background-color: #ee4266;
+  padding: 4px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+
+input.input-validation-error {
+  border: 1px solid #e80c4d;
+  background-color: #fff0f0;
+}
+
+select.input-validation-error {
+  border: 1px solid #e80c4d;
+  background-color: #fff0f0;
+}
+
+textarea.input-validation-error {
+  border: 1px solid #e80c4d;
+  background-color: #fff0f0;
+}
+
+input[type="checkbox"].input-validation-error {
+  border: 0 none;
+}
+
+.field-validation-valid {
+  display: none;
+}
+
+.validation-summary-valid {
+  display: none;
+}

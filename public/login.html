@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <title>账户绑定 - 护士电子化注册信息系统</title>
+  <meta charset="utf-8"/>
+  <meta name="keywords" content="minke"/>
+  <meta name="description" content="账户绑定 - 护士电子化注册信息系统">
+  <meta name="author" content="minke"/>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0"/>
+  <meta name="referrer" content="no-referrer">
+  <link rel="shortcut icon" href="./ns-favicon.ico"/>
+  <link rel="stylesheet" href="./assets/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./assets/css/font-awesome.min.css"/>
+  <script src="./assets/js/modernizr.min.js"></script>
+  <link rel="stylesheet" href="./assets/css/bind-account.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="bind-account">
+      <h1 class="title">账户绑定</h1>
+      <p class="description">初次使用公众号登录"护士电子化注册信息系统"请输入下方登录账户信息进行绑定</p>
+      <form class="form-horizontal" role="form" id="fm1">
+        <div class="validation-summary-errors" id="error-alert" style="display:none;"></div>
+
+        <div class="van-cell van-field">
+          <div class="van-field__left-icon">
+            <svg width="18px" height="20px" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12.2963052,13.9498348 C12.2963052,9.70643019 15.7539249,6.24881056 19.9971453,6.24881056 C24.2405499,6.24881056 27.6981695,9.70643019 27.6981695,13.9498348 C27.6981695,18.1932394 24.2405499,21.650859 19.9971453,21.650859 C15.7539249,21.650859 12.2963052,18.1932394 12.2963052,13.9498348 M26.1265535,22.7508475 C28.955536,20.865028 30.8415396,17.5646482 30.8415396,13.792641 C30.8415396,7.82042655 25.9693597,2.94838477 19.9971453,2.94838477 C14.025115,2.94838477 9.15288908,7.82042655 9.15288908,13.792641 C9.15288908,17.5646482 11.0388927,20.865028 13.8679212,22.7508475 C7.26706962,25.2654883 2.70927736,31.5520904 2.70927736,38.9387269 C2.70927736,39.8817057 3.3378685,40.5102969 4.28089334,40.5102969 C5.22387214,40.5102969 5.85250933,39.8817057 5.85250933,38.9387269 C5.85250933,31.2377027 12.2963052,24.7940449 19.9971453,24.7940449 C27.6981695,24.7940449 34.1419654,31.0806931 34.1419654,38.9387269 C34.1419654,39.8817057 34.7705565,40.5102969 35.7135814,40.5102969 C36.6565602,40.5102969 37.2851974,39.7245119 37.2851974,38.9387269 C37.2851974,31.5520904 32.5703494,25.2654883 26.1265535,22.7508475" stroke="#333333" stroke-width="0.2" fill="#333333"/>
+            </svg>
+          </div>
+          <div class="van-field__body">
+            <input type="text" id="username" name="username" class="van-field__control" autocomplete="off" placeholder="请输入登录用户名"/>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;"><span class="field-validation-valid"></span></div>
+
+        <div class="van-cell van-field">
+          <div class="van-field__left-icon">
+            <svg width="18px" height="20px" viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
+              <rect stroke="#333333" stroke-width="2" x="16.5555556" y="22.3888889" width="1.88888889" height="7.72222222" rx="0.944444444"/>
+              <path d="M5.15710734,15.6059186 C4.20657093,15.6059186 3.43595295,16.3765366 3.43595295,17.3268285 L3.43595295,33.8716475 C3.43595295,34.8219394 4.20657093,35.5925574 5.15710734,35.5925574 L29.8370258,35.5925574 C30.7875622,35.5925574 31.5581801,34.8219394 31.5581801,33.8716475 L31.5581801,17.3268285 C31.5581801,16.3765366 30.7875622,15.6059186 29.8370258,15.6059186 L5.15710734,15.6059186 Z M9.88954853,12.1640987 L25.1045846,12.1640987 L25.1045846,11.0493379 C25.1045846,6.84775381 21.6986506,3.44181986 17.4970665,3.44181986 C13.2954825,3.44181986 9.88954853,6.84775381 9.88954853,11.0493379 L9.88954853,12.1640987 Z M6.44772867,12.1640987 L6.44772867,11.0493379 C6.44772867,4.94697435 11.394703,0 17.4970665,0 C23.5994301,0 28.5464044,4.94697435 28.5464044,11.0493379 L28.5464044,12.1640987 L29.8370258,12.1640987 C32.6885861,12.1640987 35,14.4755127 35,17.3268285 L35,33.8716475 C35,36.7229633 32.6885861,39.0343773 29.8370258,39.0343773 L5.15710734,39.0343773 C2.30554702,39.0343773 -0.00586690507,36.7229633 -0.00586690507,33.8716475 L-0.00586690507,17.3268285 C-0.00586690507,14.4755127 2.30554702,12.1640987 5.15710734,12.1640987 L6.44772867,12.1640987 Z" fill="#333333"/>
+            </svg>
+          </div>
+          <div class="van-field__body">
+            <input type="password" id="password" name="password" class="van-field__control" autocomplete="off" placeholder="请输入密码"/>
+          </div>
+        </div>
+        <div style="margin-bottom:10px;"><span class="field-validation-valid"></span></div>
+
+        <div class="button-container">
+          <button type="button" id="btn-submit" class="van-button van-button--primary van-button--round van-button--block">
+            <span class="van-button__text">确定</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="./assets/js/ery.custom.min.js"></script>
+  <script src="./assets/js/bootstrap.min.js"></script>
+  <script src="./config.js"></script>
+  <script>
+    (function () {
+    function withTimestamp(url) {
+  try {
+    const target = new URL(url, window.location.href);
+    target.searchParams.set('t', Date.now().toString());
+    return target.toString();
+  } catch (error) {
+    return url;
+  }
+}
+
+function ensureFreshTimestamp() {
+  try {
+    const currentUrl = new URL(window.location.href);
+    const rawTimestamp = (currentUrl.searchParams.get('t') || '').trim();
+    const timestamp = Number(rawTimestamp);
+    const isValidTimestamp = rawTimestamp !== '' && Number.isFinite(timestamp);
+    if (isValidTimestamp && Math.abs(Date.now() - timestamp) <= 5000) {
+      return true;
+    }
+    window.location.replace(withTimestamp(window.location.href));
+    return false;
+  } catch (error) {
+    return true;
+  }
+}
+
+    if (!ensureFreshTimestamp()) {
+      return;
+    }
+
+    function navigate(url) {
+      window.location.href = withTimestamp(url);
+    }
+
+    function showError(msg) {
+      const box = document.getElementById('error-alert');
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
+
+    function hideError() {
+      const box = document.getElementById('error-alert');
+      box.textContent = '';
+      box.style.display = 'none';
+    }
+
+    document.getElementById('btn-submit').addEventListener('click', function () {
+      hideError();
+      const username = (document.getElementById('username').value || '').trim();
+      const password = (document.getElementById('password').value || '').trim();
+      if (!username) {
+        showError('用户名不能为空');
+        return;
+      }
+      if (!password) {
+        showError('密码不能为空');
+        return;
+      }
+
+      // 登录改由后端校验：口令不再写在前端文件里，也不在前端做比对
+      const base = (window.WEB003_CONFIG && window.WEB003_CONFIG.apiBaseUrl) || '';
+      const button = document.getElementById('btn-submit');
+      button.disabled = true;
+
+      fetch(base + '/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({ username: username, password: password }),
+      })
+        .then(function (response) {
+          return response.json().catch(function () { return null; });
+        })
+        .then(function (res) {
+          button.disabled = false;
+          if (!res || !res.ok || !res.data || !res.data.user) {
+            const message = (res && res.error && res.error.message) || '用户名或密码错误';
+            showError(message);
+            return;
+          }
+          localStorage.setItem('web003_user', JSON.stringify(res.data.user));
+          navigate('./index.html');
+        })
+        .catch(function () {
+          button.disabled = false;
+          showError('无法连接服务，请确认已通过 http://localhost:3000 打开本页');
+        });
+    });
+
+    document.getElementById('password').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        document.getElementById('btn-submit').click();
+      }
+    });
+    })();
+  </script>
+</body>
+</html>

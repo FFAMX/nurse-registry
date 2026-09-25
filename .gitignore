@@ -1,1 +1,41 @@
-# 占位文件：仅用于初始化仓库，稍后会被真实内容覆盖
+# 依赖
+node_modules/
+
+# 项目内附带的便携版 Node（体积 90MB+，不入库）
+# 如需携带分发，请直接把整个项目目录打包，而不是通过 git
+portable-node/
+
+# 环境变量：真实密钥绝不入库，只提交 .env.example
+.env
+.env.local
+.env.*.local
+
+# 运行时数据（含账号口令散列）
+data/*.json
+data/*.tmp
+
+# 用户上传的头像（个人照片）：不随公开仓库分发
+# 对外信息页里的头像是**内嵌进密文**的，页面本身完全自包含，
+# 因此这些图片文件无需入库；留在仓库里反而会让照片对全网可见。
+public/uploads/avatars/*.jpg
+public/uploads/avatars/*.jpeg
+public/uploads/avatars/*.png
+public/uploads/avatars/*.webp
+
+# 旧版明文数据页目录：已改为加密站点 docs/，不再使用。
+# docs/（只有密文）必须入库，否则日后用 git 推送代码时会把已发布的
+# 加密页面整片抹掉。
+pages/
+
+# 本地页面预览（scripts/export-pages.js 生成的临时产物）
+preview/
+
+# 日志与系统文件
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# 编辑器
+.vscode/
+.idea/
